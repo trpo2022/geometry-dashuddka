@@ -1,27 +1,37 @@
-CFLAGS = -Wall -Wextra -Werror
+app_name = geometry
+lib_name = libgeo
 
-all: geometry
+cflags = -Wall -Wextra -Werror
+cppflags = -I src -MP -MMD
+myflag = -lm
 
-geometry: bin/geometry
+app_path = bin/$(app_name)
+lib_path = obj/src/$(lib_name)/$(lib_name).a
 
-bin/geometry: obj/src/geometry/geometry.o obj/src/libgeo/libgeo.a
-	gcc -c -I src $(CFLAGS) -o $@ $< -lm
-	
-obj/src/geometry/geometry.o: obj/src/libgeo/libgeo.a
-	gcc -c -I src $(CFLAGS) -o $@ $< -lm	
-	
-obj/src/libgeo/libgeo.a: obj/src/libgeo/print.o obj/src/libgeo/checkprint.o obj/src/libgeo/print.o obj/src/libgeo/checkprint.o
+app_sources = $(shell find src/$(app_name) -name '*.c')
+app_objects = $(app_sources:src/%.c=obj/src/%.o)
+
+lib_sources = $(shell find src/$(lib_name) -name '*.c')
+lib_objects = $(lib_sources:src/%.c=obj/src/%.o)
+
+deps = $(app_objects:.o=.d) $(lib_objects:.o=.d)
+
+.PHONY: all
+all: $(app_path)
+
+-include $(deps)
+
+$(app_path): $(app_objects) $(lib_path)
+	gcc $(cflags) $(cppflags) $^ $(myflag) -o $@
+
+$(lib_path): $(lib_objects)
 	ar rcs $@ $^
 
-obj/src/libgeo/Check.o: src/libgeo/print.c
-	gcc -c -I src $(CFLAGS) -o $@ $< -lm
-
-obj/src/libgeo/circle_area.o: src/libgeo/checkprint.c
-	gcc -c -I src $(CFLAGS) -o $@ $< -lm	
-
-
+obj/%.o: %.c
+	gcc -c $(cflags) $(cppflags) $< $(myflag) -o $@
 
 .PHONY: clean
-
 clean:
-	rm obj/src/libgeo/*.a obj/src/libgeo/*.o obj/src/geometry/*.o bin/geometry
+	$(RM) $(app_path) $(lib_path)
+	find $(obj_dir) -name '*.o' -exec $(RM) '{}' \;
+	find $(obj_dir) -name '*.d' -exec $(RM) '{}' \;
