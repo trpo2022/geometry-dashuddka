@@ -1,6 +1,6 @@
 #include <ctype.h>
-#include <libgeometry/checkprint.h>
-#include <libgeometry/print.h>
+#include <libgeo/checkprint.h>
+#include <libgeo/print.h>
 #include <math.h>
 #include <stdio.h>
 #include <stdlib.h>
