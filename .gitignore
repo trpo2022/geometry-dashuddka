@@ -1,4 +1,6 @@
-*.o
-*.exe
-*.out
+.main.c.swp
+main.c~
+#main.c#
 main
+bin/
+obj/
