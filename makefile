@@ -29,7 +29,7 @@ $(lib_path): $(lib_objects)
 
 obj/%.o: %.c
 	gcc -c $(cflags) $(cppflags) $< $(myflag) -o $@
-
+ 
 .PHONY: clean
 clean:
 	$(RM) $(app_path) $(lib_path)
